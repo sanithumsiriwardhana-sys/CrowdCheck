@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1E2B2F"/>
+    </marker>
+  </defs>
+  <rect width="960" height="560" fill="#F8F8F5"/>
+  <text x="30" y="40" font-size="24" font-weight="bold" fill="#1E2B2F">CrowdCheck 177 - System Architecture (Gate 2)</text>
+
+  <!-- User -->
+  <rect x="30" y="230" width="140" height="80" rx="10" fill="#F2C230" stroke="#1E2B2F" stroke-width="2"/>
+  <text x="100" y="263" font-size="16" font-weight="bold" text-anchor="middle" fill="#1E2B2F">SLIIT commuter</text>
+  <text x="100" y="285" font-size="13" text-anchor="middle" fill="#1E2B2F">phone / laptop</text>
+
+  <!-- Frontend -->
+  <rect x="230" y="200" width="200" height="140" rx="10" fill="#fff" stroke="#1E2B2F" stroke-width="2"/>
+  <text x="330" y="228" font-size="16" font-weight="bold" text-anchor="middle">Frontend</text>
+  <text x="330" y="248" font-size="13" text-anchor="middle" fill="#55636A">Next.js 14 (Vercel)</text>
+  <text x="245" y="276" font-size="13">- Pick direction / day / time</text>
+  <text x="245" y="296" font-size="13">- Prediction + day timeline</text>
+  <text x="245" y="316" font-size="13">- 5-second crowd report</text>
+
+  <!-- Backend -->
+  <rect x="500" y="160" width="220" height="220" rx="10" fill="#fff" stroke="#1E2B2F" stroke-width="2"/>
+  <text x="610" y="188" font-size="16" font-weight="bold" text-anchor="middle">Backend API</text>
+  <text x="610" y="208" font-size="13" text-anchor="middle" fill="#55636A">FastAPI (Render)</text>
+  <text x="515" y="238" font-size="13">POST /predict</text>
+  <text x="515" y="258" font-size="13">GET  /forecast/day</text>
+  <text x="515" y="278" font-size="13">POST /report</text>
+  <text x="515" y="298" font-size="13">GET  /reports/recent</text>
+  <text x="515" y="328" font-size="13">Blends model output with</text>
+  <text x="515" y="346" font-size="13">rider reports (last 30 min)</text>
+
+  <!-- Model -->
+  <rect x="780" y="90" width="160" height="110" rx="10" fill="#fff" stroke="#2F8F5B" stroke-width="2"/>
+  <text x="860" y="118" font-size="16" font-weight="bold" text-anchor="middle">ML model</text>
+  <text x="860" y="140" font-size="13" text-anchor="middle">LightGBM classifier</text>
+  <text x="860" y="160" font-size="13" text-anchor="middle">4 crowd levels</text>
+  <text x="860" y="180" font-size="12" text-anchor="middle" fill="#55636A">crowd_model.joblib</text>
+
+  <!-- Weather -->
+  <rect x="780" y="230" width="160" height="80" rx="10" fill="#fff" stroke="#1E2B2F" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="860" y="262" font-size="16" font-weight="bold" text-anchor="middle">Open-Meteo</text>
+  <text x="860" y="284" font-size="13" text-anchor="middle">hourly rain, Malabe</text>
+
+  <!-- DB -->
+  <rect x="780" y="340" width="160" height="90" rx="10" fill="#fff" stroke="#1E2B2F" stroke-width="2"/>
+  <text x="860" y="370" font-size="16" font-weight="bold" text-anchor="middle">Supabase</text>
+  <text x="860" y="390" font-size="13" text-anchor="middle">PostgreSQL</text>
+  <text x="860" y="410" font-size="12" text-anchor="middle" fill="#55636A">crowd_reports table</text>
+
+  <!-- Training pipeline -->
+  <rect x="230" y="420" width="490" height="110" rx="10" fill="#ECEDE8" stroke="#1E2B2F" stroke-width="2"/>
+  <text x="475" y="448" font-size="16" font-weight="bold" text-anchor="middle">Training pipeline (offline, python -m ml.train)</text>
+  <text x="250" y="476" font-size="13">Seed data (survey-shaped, synthetic) x1  +  Field logs (team, Route 177) x5</text>
+  <text x="250" y="496" font-size="13">+  Rider reports from Supabase x3   →   features: time, day, direction,</text>
+  <text x="250" y="516" font-size="13">lecture day, exam week, holiday, rain   →   new crowd_model.joblib</text>
+
+  <!-- arrows -->
+  <line x1="170" y1="270" x2="228" y2="270" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="430" y1="255" x2="498" y2="255" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <text x="440" y="246" font-size="11" fill="#55636A">JSON / HTTPS</text>
+  <line x1="498" y1="290" x2="432" y2="290" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="720" y1="200" x2="778" y2="160" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="720" y1="268" x2="778" y2="268" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="720" y1="345" x2="778" y2="380" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="860" y1="430" x2="860" y2="475" stroke="#1E2B2F" stroke-width="2"/>
+  <line x1="860" y1="475" x2="722" y2="475" stroke="#1E2B2F" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M722,440 C760,440 760,140 778,140" fill="none" stroke="#2F8F5B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a)"/>
+  <text x="742" y="470" font-size="11" fill="#55636A">reports</text>
+  <text x="730" y="430" font-size="11" fill="#2F8F5B">retrain</text>
+</svg>
