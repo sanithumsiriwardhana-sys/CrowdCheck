@@ -1,0 +1,26 @@
+{
+  "trained_at": "2026-10-09T10:03:09.515361+00:00",
+  "rows_by_source": {
+    "synthetic": 160928
+  },
+  "holdout_accuracy": 0.8314,
+  "holdout_within_one_level": 0.9886,
+  "feature_importance": {
+    "minute_of_day": 12471,
+    "route_code": 4934,
+    "rain_mm": 4656,
+    "day_of_week": 3721,
+    "direction_code": 3084,
+    "hour": 2643,
+    "is_lecture_day": 1201,
+    "is_day_after_holiday": 626,
+    "is_day_before_holiday": 604,
+    "is_public_holiday": 591,
+    "is_poya": 538,
+    "is_long_weekend": 517,
+    "is_exam_week": 412,
+    "is_weekend": 2,
+    "to_colombo": 0
+  },
+  "note": "Trained mostly on synthetic seed data shaped by survey results. Accuracy reflects fit to that seed pattern, not real-world accuracy yet."
+}

@@ -1,0 +1,401 @@
+{
+  "source": "google_calendar:en.lk#holiday@group.v.calendar.google.com",
+  "fetched_at": "2026-10-09T10:09:26.028543+00:00",
+  "holidays": [
+    {
+      "date": "2025-01-13",
+      "name": "Duruthu Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-01-14",
+      "name": "Tamil Thai Pongal Day",
+      "poya": false
+    },
+    {
+      "date": "2025-02-04",
+      "name": "National Day",
+      "poya": false
+    },
+    {
+      "date": "2025-02-12",
+      "name": "Navam Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-02-26",
+      "name": "Mahasivarathri Day",
+      "poya": false
+    },
+    {
+      "date": "2025-03-13",
+      "name": "Madin Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-03-31",
+      "name": "Eid al-Fitr",
+      "poya": false
+    },
+    {
+      "date": "2025-04-12",
+      "name": "Bak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-04-13",
+      "name": "Sinhala and Tamil New Year's Eve",
+      "poya": false
+    },
+    {
+      "date": "2025-04-14",
+      "name": "Sinhala and Tamil New Year's Day",
+      "poya": false
+    },
+    {
+      "date": "2025-04-18",
+      "name": "Good Friday",
+      "poya": false
+    },
+    {
+      "date": "2025-05-01",
+      "name": "May Day",
+      "poya": false
+    },
+    {
+      "date": "2025-05-12",
+      "name": "Vesak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-05-13",
+      "name": "Day after Vesak Full Moon Poya Day",
+      "poya": false
+    },
+    {
+      "date": "2025-06-07",
+      "name": "Eid al-Adha",
+      "poya": false
+    },
+    {
+      "date": "2025-06-10",
+      "name": "Poson Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-07-10",
+      "name": "Esala Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-08-08",
+      "name": "Nikini Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-09-05",
+      "name": "Milad-Un-Nabi",
+      "poya": false
+    },
+    {
+      "date": "2025-09-07",
+      "name": "Binara Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-10-06",
+      "name": "Vap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-10-20",
+      "name": "Deepavali",
+      "poya": false
+    },
+    {
+      "date": "2025-11-05",
+      "name": "Il Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-11-28",
+      "name": "Bad Weather Holiday",
+      "poya": false
+    },
+    {
+      "date": "2025-12-04",
+      "name": "Unduvap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2025-12-25",
+      "name": "Christmas Day",
+      "poya": false
+    },
+    {
+      "date": "2026-01-03",
+      "name": "Duruthu Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-01-15",
+      "name": "Tamil Thai Pongal Day",
+      "poya": false
+    },
+    {
+      "date": "2026-02-01",
+      "name": "Navam Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-02-04",
+      "name": "National Day",
+      "poya": false
+    },
+    {
+      "date": "2026-02-15",
+      "name": "Mahasivarathri Day",
+      "poya": false
+    },
+    {
+      "date": "2026-03-02",
+      "name": "Madin Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-03-18",
+      "name": "Fuel Conservation Holiday",
+      "poya": false
+    },
+    {
+      "date": "2026-03-21",
+      "name": "Eid al-Fitr",
+      "poya": false
+    },
+    {
+      "date": "2026-03-25",
+      "name": "Fuel Conservation Holiday",
+      "poya": false
+    },
+    {
+      "date": "2026-04-01",
+      "name": "Bak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-04-01",
+      "name": "Fuel Conservation Holiday",
+      "poya": false
+    },
+    {
+      "date": "2026-04-03",
+      "name": "Good Friday",
+      "poya": false
+    },
+    {
+      "date": "2026-04-13",
+      "name": "Sinhala and Tamil New Year's Eve",
+      "poya": false
+    },
+    {
+      "date": "2026-04-14",
+      "name": "Sinhala and Tamil New Year's Day",
+      "poya": false
+    },
+    {
+      "date": "2026-05-01",
+      "name": "Adhi Vesak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-05-01",
+      "name": "May Day",
+      "poya": false
+    },
+    {
+      "date": "2026-05-28",
+      "name": "Eid al-Adha",
+      "poya": false
+    },
+    {
+      "date": "2026-05-30",
+      "name": "Vesak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-05-31",
+      "name": "Day after Vesak Full Moon Poya Day",
+      "poya": false
+    },
+    {
+      "date": "2026-06-29",
+      "name": "Poson Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-07-29",
+      "name": "Esala Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-08-26",
+      "name": "Milad-Un-Nabi",
+      "poya": false
+    },
+    {
+      "date": "2026-08-27",
+      "name": "Nikini Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-09-26",
+      "name": "Binara Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-10-25",
+      "name": "Vap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-11-08",
+      "name": "Deepavali",
+      "poya": false
+    },
+    {
+      "date": "2026-11-24",
+      "name": "Il Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-12-23",
+      "name": "Unduvap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2026-12-25",
+      "name": "Christmas Day",
+      "poya": false
+    },
+    {
+      "date": "2027-01-15",
+      "name": "Tamil Thai Pongal Day",
+      "poya": false
+    },
+    {
+      "date": "2027-01-22",
+      "name": "Duruthu Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-02-04",
+      "name": "National Day",
+      "poya": false
+    },
+    {
+      "date": "2027-02-20",
+      "name": "Navam Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-03-06",
+      "name": "Mahasivarathri Day",
+      "poya": false
+    },
+    {
+      "date": "2027-03-10",
+      "name": "Eid al-Fitr (tentative)",
+      "poya": false
+    },
+    {
+      "date": "2027-03-22",
+      "name": "Madin Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-03-26",
+      "name": "Good Friday",
+      "poya": false
+    },
+    {
+      "date": "2027-04-13",
+      "name": "Sinhala and Tamil New Year's Eve",
+      "poya": false
+    },
+    {
+      "date": "2027-04-14",
+      "name": "Sinhala and Tamil New Year's Day",
+      "poya": false
+    },
+    {
+      "date": "2027-04-20",
+      "name": "Bak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-05-01",
+      "name": "May Day",
+      "poya": false
+    },
+    {
+      "date": "2027-05-17",
+      "name": "Eid al-Adha (tentative)",
+      "poya": false
+    },
+    {
+      "date": "2027-05-19",
+      "name": "Vesak Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-06-18",
+      "name": "Poson Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-07-18",
+      "name": "Esala Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-08-15",
+      "name": "Milad-Un-Nabi (tentative)",
+      "poya": false
+    },
+    {
+      "date": "2027-08-16",
+      "name": "Nikini Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-09-15",
+      "name": "Binara Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-10-15",
+      "name": "Vap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-10-28",
+      "name": "Deepavali",
+      "poya": false
+    },
+    {
+      "date": "2027-11-13",
+      "name": "Il Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-12-13",
+      "name": "Unduvap Full Moon Poya Day",
+      "poya": true
+    },
+    {
+      "date": "2027-12-25",
+      "name": "Christmas Day",
+      "poya": false
+    }
+  ]
+}
