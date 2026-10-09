@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timezone
 
 from sqlalchemy import (Column, DateTime, Integer, String, create_engine,
-                        func, select)
+                        func, select, text)
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./local.db")
@@ -37,6 +37,24 @@ class CrowdReport(Base):
 def init_db():
     # Safe on Supabase too: only creates the table if it doesn't exist.
     Base.metadata.create_all(bind=engine)
+    migrate_multi_route()
+
+
+def migrate_multi_route():
+    """One-time upgrade from the 177-only version (safe to run every startup).
+    - Postgres: drop the old check that only allowed to_sliit / from_sliit
+    - Rename old Route 177 directions to the new names
+    """
+    with engine.begin() as conn:
+        if engine.dialect.name == "postgresql":
+            conn.execute(text(
+                "ALTER TABLE crowd_reports DROP CONSTRAINT IF EXISTS crowd_reports_direction_check"))
+        conn.execute(text(
+            "UPDATE crowd_reports SET direction = 'to_kaduwela' "
+            "WHERE route = '177' AND direction = 'to_sliit'"))
+        conn.execute(text(
+            "UPDATE crowd_reports SET direction = 'to_kollupitiya' "
+            "WHERE route = '177' AND direction = 'from_sliit'"))
 
 
 def recent_reports(session, route: str, direction: str, since: datetime):
