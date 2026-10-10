@@ -1,9 +1,12 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BusFill from "@/components/BusFill";
 import DayStrip from "@/components/DayStrip";
 import ReportPanel from "@/components/ReportPanel";
-import { api, DaySlot, Direction, Prediction, RecentReport } from "@/lib/api";
+import { api, DaySlot, Direction, Holiday, Prediction, RecentReport } from "@/lib/api";
+import { dirLabel, routeByCode, ROUTES } from "@/lib/routes";
+
+const ROUTE_KEY = "crowdcheck.route";
 
 function slNow() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -23,13 +26,14 @@ function slNow() {
   };
 }
 
-const DIRS: { id: Direction; label: string; sub: string }[] = [
-  { id: "to_sliit", label: "To SLIIT", sub: "towards Kaduwela" },
-  { id: "from_sliit", label: "From SLIIT", sub: "towards Kollupitiya" },
-];
+function fmtDay(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
 
 export default function Home() {
-  const [direction, setDirection] = useState<Direction>("to_sliit");
+  const [route, setRoute] = useState("177");
+  const [direction, setDirection] = useState<Direction>(ROUTES[0].dirs[0].id);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [pred, setPred] = useState<Prediction | null>(null);
@@ -37,44 +41,79 @@ export default function Home() {
   const [recent, setRecent] = useState<RecentReport[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nextHoliday, setNextHoliday] = useState<Holiday | null>(null);
+  const reqId = useRef(0);
 
-  useEffect(() => { const n = slNow(); setDate(n.date); setTime(n.time); }, []);
+  const info = routeByCode(route);
 
-  const loadRecent = useCallback(() => {
-    api.recent().then((r) => setRecent(r.reports)).catch(() => {});
+  useEffect(() => {
+    const n = slNow(); setDate(n.date); setTime(n.time);
+    api.holidays(n.date, 60).then((r) => setNextHoliday(r.holidays[0] ?? null)).catch(() => {});
+    try {
+      const saved = localStorage.getItem(ROUTE_KEY);
+      if (saved && ROUTES.some((r) => r.code === saved)) {
+        setRoute(saved); setDirection(routeByCode(saved).dirs[0].id);
+      }
+    } catch { /* storage blocked: keep default route */ }
   }, []);
 
-  const check = useCallback(async (t = time, d = date, dir = direction) => {
+  function pickRoute(code: string) {
+    if (code === route) return;
+    setRoute(code);
+    setDirection(routeByCode(code).dirs[0].id);
+    setPred(null); setSlots([]); setRecent([]);
+    try { localStorage.setItem(ROUTE_KEY, code); } catch { /* ignore */ }
+  }
+
+  const loadRecent = useCallback((r = route) => {
+    api.recent(r).then((res) => setRecent(res.reports)).catch(() => {});
+  }, [route]);
+
+  const check = useCallback(async (t = time, d = date, dir = direction, r = route) => {
     if (!t || !d) return;
+    const id = ++reqId.current;
     setLoading(true); setError(null);
     try {
-      const [p, day] = await Promise.all([api.predict(dir, t, d), api.day(dir, d)]);
+      const [p, day] = await Promise.all([api.predict(r, dir, t, d), api.day(r, dir, d)]);
+      if (id !== reqId.current) return; // a newer request (e.g. route switch) won
       setPred(p); setSlots(day.slots); setTime(p.departure);
     } catch (e) {
+      if (id !== reqId.current) return;
       setError(`Couldn't reach the prediction service. Start the backend and check NEXT_PUBLIC_API_URL. (${(e as Error).message})`);
     } finally {
-      setLoading(false);
+      if (id === reqId.current) setLoading(false);
     }
-  }, [time, date, direction]);
+  }, [time, date, direction, route]);
 
-  useEffect(() => { if (date && time) check(); loadRecent(); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, direction]);
+  useEffect(() => {
+    if (date && time) check(time, date, direction, route);
+    loadRecent(route);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date, direction, route]);
 
   return (
     <main>
+      <nav className="routes" aria-label="Choose a bus route">
+        {ROUTES.map((r) => (
+          <button key={r.code} type="button" aria-pressed={r.code === route}
+            className={`route-btn ${r.code === route ? "on" : ""}`} onClick={() => pickRoute(r.code)}>
+            <span className="route-num">{r.code}</span>
+            <span className="route-ends">{r.from} – {r.to}</span>
+          </button>
+        ))}
+      </nav>
+
       <header className="masthead">
-        <div className="plate" aria-hidden>
-          <span className="plate-num">177</span>
-          <span className="plate-dest">Kollupitiya ↔ Kaduwela</span>
-        </div>
-        <h1>Will I get on the 177?</h1>
-        <p className="lede">Predicted crowding for Route 177 on the SLIIT Malabe corridor, before you leave.</p>
+        <h1>Will I get on the {route}?</h1>
+        <p className="lede">
+          Predicted crowding for Route {route}, {info.from} to {info.to}, at the SLIIT Malabe stop. Check before you leave.
+        </p>
       </header>
 
       <div className="grid">
         <section className="panel ask">
           <div className="seg" role="radiogroup" aria-label="Direction">
-            {DIRS.map((d) => (
+            {info.dirs.map((d) => (
               <button key={d.id} type="button" role="radio" aria-checked={direction === d.id}
                 className={direction === d.id ? "on" : ""} onClick={() => setDirection(d.id)}>
                 <strong>{d.label}</strong><small>{d.sub}</small>
@@ -89,6 +128,14 @@ export default function Home() {
               <input type="time" value={time} step={600} min="05:30" max="21:00" onChange={(e) => setTime(e.target.value)} />
             </label>
           </div>
+          {nextHoliday && (
+            <p className="next-holiday">
+              Next holiday: <button type="button" className="linkish"
+                onClick={() => setDate(nextHoliday.date)}>
+                {nextHoliday.name}, {fmtDay(nextHoliday.date)}
+              </button>
+            </p>
+          )}
           <button type="button" className="primary" onClick={() => check()} disabled={loading}>
             {loading ? "Checking…" : "Check this bus"}
           </button>
@@ -96,13 +143,16 @@ export default function Home() {
         </section>
 
         <section className={`panel result ${pred ? `lv${pred.level}` : "empty"}`} aria-live="polite">
-          {!pred && !error && <p className="muted">Pick a direction and time, then check the bus.</p>}
+          {!pred && !error && <p className="muted">{loading ? "Checking…" : "Pick a direction and time, then check the bus."}</p>}
           {pred && (
             <>
-              <p className="when">{pred.departure} bus, {pred.direction === "to_sliit" ? "to SLIIT" : "from SLIIT"}</p>
+              <p className="when">{pred.departure} bus {dirLabel(pred.route, pred.direction).replace(/^To /, "to ")}</p>
               <p className="verdict">{pred.label}</p>
               <p className="conf">{Math.round(pred.confidence * 100)}% likely</p>
               <BusFill level={pred.level} />
+              {pred.day?.note && (
+                <p className={`day-note ${pred.day.holiday ? "is-holiday" : ""}`}>{pred.day.note}</p>
+              )}
               <p className="tip">{pred.tip}</p>
               {pred.better_option && (
                 <button type="button" className="ghost" onClick={() => check(pred.better_option!.time)}>
@@ -120,8 +170,8 @@ export default function Home() {
 
       {slots.length > 0 && (
         <section className="panel day">
-          <h2>The whole day</h2>
-          <p className="muted">Taller and darker means more crowded. Tap a bus to check it.</p>
+          <h2>Route {route} across the day</h2>
+          <p className="muted">{dirLabel(route, direction)}. Taller and darker means more crowded. Tap a bus to check it.</p>
           <DayStrip slots={slots} selected={time} onPick={(t) => check(t)} />
           <ul className="legend">
             <li className="l0">Seats free</li><li className="l1">Standing room</li>
@@ -131,9 +181,9 @@ export default function Home() {
       )}
 
       <div className="grid">
-        <ReportPanel direction={direction} onSaved={() => { loadRecent(); check(); }} />
+        <ReportPanel route={route} direction={direction} onSaved={() => { loadRecent(); check(); }} />
         <section className="panel recent">
-          <h2>Recent rider reports</h2>
+          <h2>Recent reports on the {route}</h2>
           {recent.length === 0
             ? <p className="muted">No reports in the last three hours. Be the first.</p>
             : (
@@ -142,7 +192,7 @@ export default function Home() {
                   <li key={r.id}>
                     <span className={`dot l${r.level}`} aria-hidden />
                     <span>{r.reported_at}</span>
-                    <span>{r.direction === "to_sliit" ? "To SLIIT" : "From SLIIT"}</span>
+                    <span>{dirLabel(route, r.direction)}</span>
                     <strong>{r.label}</strong>
                     {r.stop_name && <span className="muted">at {r.stop_name}</span>}
                   </li>
