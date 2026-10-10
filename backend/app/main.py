@@ -1,5 +1,5 @@
 """
-CrowdCheck 177 - FastAPI backend.
+CrowdCheck - FastAPI backend (routes 177, 170, 190, 17).
 
 Run locally:  uvicorn app.main:app --reload --port 8000
 Docs:         http://localhost:8000/docs
@@ -9,7 +9,7 @@ import os
 import time as _time
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Optional
 
 import httpx
 import joblib
@@ -19,9 +19,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.db import CrowdReport, SessionLocal, count_reports, init_db, recent_reports
-from ml.features import (CROWD_LABELS, DEPARTURE_STEP_MIN, ROUTES, SERVICE_END,
-                         SERVICE_START, build_features, departures_around,
-                         features_frame, snap_to_departure)
+from ml import holidays
+from ml.features import (CROWD_LABELS, DEPARTURE_STEP_MIN, LEGACY_DIRECTIONS,
+                         ROUTES, SERVICE_END,
+                         SERVICE_START, build_features, calendar_flags,
+                         departures_around, features_frame, is_to_colombo,
+                         snap_to_departure)
 
 ROOT = Path(__file__).resolve().parent.parent
 MODEL_PATH = ROOT / "models" / "crowd_model.joblib"
@@ -30,7 +33,7 @@ METRICS_PATH = ROOT / "models" / "metrics.json"
 SL_TZ = timezone(timedelta(hours=5, minutes=30))
 MALABE = (6.9147, 79.9729)  # SLIIT Malabe, for weather
 
-app = FastAPI(title="CrowdCheck 177 API", version="0.2.0")
+app = FastAPI(title="CrowdCheck API", version="0.4.0")
 
 origins = [o.strip() for o in os.getenv("FRONTEND_ORIGIN", "*").split(",")]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"],
@@ -47,6 +50,17 @@ def startup():
     if not MODEL_PATH.exists():
         raise RuntimeError("Model not found. Run: python -m ml.generate_seed_data && python -m ml.train")
     model = joblib.load(MODEL_PATH)
+    holidays.refresh_in_background()  # Google Calendar -> data/holidays_lk.json
+
+
+_last_holiday_check = [0.0]
+
+
+def maybe_refresh_holidays():
+    """Re-check Google at most every 6 hours (it only actually fetches once a day)."""
+    if _time.time() - _last_holiday_check[0] > 6 * 3600:
+        _last_holiday_check[0] = _time.time()
+        holidays.refresh_in_background()
 
 
 # ---------------------------------------------------------------- helpers
@@ -62,11 +76,16 @@ def parse_hhmm(s: str) -> time:
         raise HTTPException(422, "time must be HH:MM (24h), e.g. 07:40")
 
 
-def check_route(route: str, direction: str):
+def check_route(route: str, direction: str) -> str:
+    """Validate route + direction. Returns the direction (old 177 names are mapped)."""
     if route not in ROUTES:
         raise HTTPException(404, f"Route {route} is not covered yet. Available: {list(ROUTES)}")
-    if direction not in ROUTES[route]["directions"]:
-        raise HTTPException(422, "direction must be 'to_sliit' or 'from_sliit'")
+    if route == "177":
+        direction = LEGACY_DIRECTIONS.get(direction, direction)
+    valid = list(ROUTES[route]["directions"])
+    if direction not in valid:
+        raise HTTPException(422, f"direction for route {route} must be one of {valid}")
+    return direction
 
 
 def hourly_rain(d: date) -> tuple[dict[int, float], str]:
@@ -118,6 +137,34 @@ def expected_level(p: np.ndarray) -> float:
     return float(np.dot(p, np.arange(4)))
 
 
+def day_info(route: str, direction: str, d: date) -> dict:
+    """Holiday context for a date, plus a short plain-language note for the app."""
+    cal = calendar_flags(d)
+    to_colombo = bool(is_to_colombo(route, direction))
+    names = cal["holiday_names"]
+    note = None
+    if names:
+        what = " and ".join(names)
+        if route == "17":
+            note = f"{what}. Expect extra travellers on the 17, especially towards Kandy."
+        else:
+            note = f"{what}. Most offices and SLIIT are closed, so buses should be quieter."
+    elif cal["is_long_weekend"] and route == "17":
+        note = "Long weekend. Expect extra travellers on the 17."
+    elif cal["is_day_before_holiday"] and not to_colombo:
+        note = "Day before a holiday. The evening rush out of Colombo is usually heavier."
+    elif cal["is_day_after_holiday"] and to_colombo:
+        note = "First working day after a holiday. The morning rush into Colombo is usually heavier."
+    return {
+        "holiday": names[0] if names else None,
+        "is_poya": bool(cal["is_poya"]),
+        "is_long_weekend": bool(cal["is_long_weekend"]),
+        "is_day_before_holiday": bool(cal["is_day_before_holiday"]),
+        "is_day_after_holiday": bool(cal["is_day_after_holiday"]),
+        "note": note,
+    }
+
+
 def make_tip(level: int) -> str:
     return {
         0: "You should get a seat.",
@@ -130,14 +177,14 @@ def make_tip(level: int) -> str:
 # ---------------------------------------------------------------- schemas
 class PredictIn(BaseModel):
     route: str = "177"
-    direction: Literal["to_sliit", "from_sliit"]
+    direction: str = Field(..., examples=["to_kaduwela"])
     time: str = Field(..., examples=["07:40"])
     date: Optional[str] = Field(None, description="YYYY-MM-DD, defaults to today (Sri Lanka time)")
 
 
 class ReportIn(BaseModel):
     route: str = "177"
-    direction: Literal["to_sliit", "from_sliit"]
+    direction: str = Field(..., examples=["to_kaduwela"])
     crowd_level: int = Field(..., ge=0, le=3)
     stop_name: Optional[str] = Field(None, max_length=80)
 
@@ -164,7 +211,8 @@ def model_info():
 
 @app.post("/predict")
 def predict(body: PredictIn):
-    check_route(body.route, body.direction)
+    body.direction = check_route(body.route, body.direction)
+    maybe_refresh_holidays()
     d = date.fromisoformat(body.date) if body.date else now_sl().date()
     t = snap_to_departure(parse_hhmm(body.time))
     rain, weather_src = hourly_rain(d)
@@ -205,14 +253,25 @@ def predict(body: PredictIn):
         "live_reports_used": n_live,
         "better_option": best,
         "tip": tip,
+        "day": day_info(body.route, body.direction, d),
     }
 
 
+@app.get("/holidays")
+def holidays_upcoming(days: int = Query(60, ge=1, le=400), start: Optional[str] = None):
+    """Upcoming Sri Lankan holidays (Poya + public) used by the model."""
+    maybe_refresh_holidays()
+    s = date.fromisoformat(start) if start else now_sl().date()
+    data = holidays._read_file()
+    return {"source": data.get("source"), "fetched_at": data.get("fetched_at"),
+            "holidays": holidays.upcoming(s, days)}
+
+
 @app.get("/forecast/day")
-def forecast_day(direction: Literal["to_sliit", "from_sliit"], route: str = "177",
+def forecast_day(direction: str, route: str = "177",
                  day: Optional[str] = Query(None, alias="date")):
     """Predicted level for every departure slot of a day (for the timeline strip)."""
-    check_route(route, direction)
+    direction = check_route(route, direction)
     d = date.fromisoformat(day) if day else now_sl().date()
     rain, weather_src = hourly_rain(d)
     slots = []
@@ -230,7 +289,7 @@ def forecast_day(direction: Literal["to_sliit", "from_sliit"], route: str = "177
 
 @app.post("/report", status_code=201)
 def report(body: ReportIn):
-    check_route(body.route, body.direction)
+    body.direction = check_route(body.route, body.direction)
     with SessionLocal() as s:
         rep = CrowdReport(route=body.route, direction=body.direction,
                           crowd_level=body.crowd_level, stop_name=body.stop_name)

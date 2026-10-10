@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { api, Direction, LEVELS } from "@/lib/api";
 
-export default function ReportPanel({ direction, onSaved }: {
-  direction: Direction; onSaved: () => void;
+export default function ReportPanel({ route, direction, onSaved }: {
+  route: string; direction: Direction; onSaved: () => void;
 }) {
   const [stop, setStop] = useState("");
   const [busy, setBusy] = useState<number | null>(null);
@@ -13,7 +13,7 @@ export default function ReportPanel({ direction, onSaved }: {
   async function send(level: number) {
     setBusy(level); setErr(null); setMsg(null);
     try {
-      const r = await api.report(direction, level, stop.trim());
+      const r = await api.report(route, direction, level, stop.trim());
       setMsg(`Report saved: ${r.label}. ${r.total_reports} reports collected so far.`);
       onSaved();
     } catch (e) {
@@ -25,7 +25,7 @@ export default function ReportPanel({ direction, onSaved }: {
 
   return (
     <section className="panel report">
-      <h2>Just got off a 177?</h2>
+      <h2>Just got off a {route}?</h2>
       <p className="muted">Tap how full it was. It takes five seconds and makes the next prediction better.</p>
       <label className="field">
         <span>Stop (optional)</span>

@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "CrowdCheck 177 - Will I get on the bus?",
-  description: "Predicted crowd levels for Route 177 buses on the SLIIT Malabe corridor.",
+  title: "CrowdCheck - Will I get on the bus?",
+  description: "Predicted crowd levels for routes 177, 170, 190 and 17 on the SLIIT Malabe corridor.",
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#ECEDE8" };

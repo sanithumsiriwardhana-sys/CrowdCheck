@@ -27,31 +27,54 @@ h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); letter-spacing: -0.01em; }
 h2 { font-size: 1.6rem; margin-bottom: 4px; }
 .muted { color: var(--ink-soft); margin: 0 0 12px; }
 
-/* The route plate is the one loud thing on the page */
 .masthead { margin-bottom: 28px; }
-.plate {
-  display: inline-flex; align-items: stretch; margin-bottom: 18px;
-  background: var(--plate); border: 3px solid var(--ink); border-radius: 6px;
-  box-shadow: 4px 4px 0 var(--ink);
+
+/* Route picker: each button is a bus route plate. The selected one is lit up. */
+.routes {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  margin-bottom: 26px;
 }
-.plate-num {
-  font: 800 3.4rem/1 var(--display); padding: 6px 16px 2px;
-  border-right: 3px solid var(--ink);
+@media (min-width: 720px) { .routes { grid-template-columns: repeat(4, 1fr); } }
+.route-btn {
+  display: flex; align-items: stretch; text-align: left; padding: 0; min-width: 0;
+  font: inherit; color: var(--ink-soft); background: var(--paper);
+  border: 2px solid var(--line); border-radius: 6px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
-.plate-dest { font: 700 1.35rem/1 var(--display); padding: 0 16px; display: flex; align-items: center; }
+.route-btn:hover { border-color: var(--ink); color: var(--ink); }
+.route-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.route-num {
+  font: 800 2.3rem/1 var(--display); padding: 8px 10px 4px; min-width: 2.2em; text-align: center;
+  border-right: 2px solid var(--line); display: flex; align-items: center; justify-content: center;
+}
+.route-ends { font: 600 1rem/1.15 var(--display); padding: 6px 10px; display: flex; align-items: center; min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 719px) {
+  .routes { gap: 10px; }
+  .route-btn { flex-direction: column; }
+  .route-num { font-size: 2rem; border-right: 0; border-bottom: 2px solid var(--line); padding: 6px 8px 2px; }
+  .route-btn.on .route-num { border-right: 0; border-bottom: 3px solid var(--ink); }
+  .route-ends { font-size: 0.95rem; padding: 6px 8px; justify-content: center; text-align: center; }
+}
+.route-btn.on {
+  background: var(--plate); color: var(--ink); border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px);
+}
+.route-btn.on .route-num { border-right: 3px solid var(--ink); }
 .lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 46ch; margin: 10px 0 0; }
 
-.grid { display: grid; gap: 20px; grid-template-columns: 1fr; margin-bottom: 20px; }
-@media (min-width: 860px) { .grid { grid-template-columns: 5fr 7fr; } }
+.grid { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); margin-bottom: 20px; }
+.grid > * { min-width: 0; }
+@media (min-width: 860px) { .grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
 
 .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 22px; }
 .day { margin-bottom: 20px; }
 
 /* Direction toggle */
-.seg { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: 18px; }
+.seg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: 18px; }
 .seg button {
   font: inherit; background: transparent; color: var(--ink); border: 0; padding: 10px 8px;
   display: flex; flex-direction: column; align-items: center; cursor: pointer;
+  min-width: 0; text-align: center;
 }
 .seg button + button { border-left: 2px solid var(--ink); }
 .seg button strong { font: 700 1.25rem/1.1 var(--display); }
@@ -59,11 +82,12 @@ h2 { font-size: 1.6rem; margin-bottom: 4px; }
 .seg button.on { background: var(--ink); color: var(--paper); }
 .seg button.on small { color: #C5CDD0; }
 
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; font-weight: 600; font-size: 0.95rem; }
 .field input {
   font: 500 1.05rem var(--body); color: var(--ink); background: #fff;
   border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
+  width: 100%; min-width: 0;
 }
 
 button { cursor: pointer; }
@@ -91,6 +115,16 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--plate); out
 .lv2 .verdict { color: var(--l2); } .lv3 .verdict { color: var(--l3); }
 .conf { margin: 0 0 12px; font-weight: 600; }
 .tip { font-size: 1.1rem; margin: 10px 0 12px; }
+.day-note {
+  margin: 12px 0 0; padding: 8px 12px; border-left: 4px solid var(--ink-soft);
+  background: var(--concrete); font-weight: 600; font-size: 0.98rem;
+}
+.day-note.is-holiday { border-left-color: var(--plate); }
+.next-holiday { margin: -4px 0 14px; font-size: 0.92rem; color: var(--ink-soft); }
+.linkish {
+  font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 0;
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
 .facts { display: flex; gap: 24px; margin: 0; flex-wrap: wrap; font-size: 0.9rem; }
 .facts dt { color: var(--ink-soft); }
 .facts dd { margin: 0; font-weight: 600; }

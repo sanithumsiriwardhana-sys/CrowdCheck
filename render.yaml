@@ -3,7 +3,7 @@ services:
     name: crowdcheck-177-api
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt && python -m ml.generate_seed_data && python -m ml.train
+    buildCommand: pip install -r requirements.txt && python -m ml.holidays && python -m ml.generate_seed_data && python -m ml.train
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
@@ -11,4 +11,6 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: FRONTEND_ORIGIN
+        sync: false
+      - key: GOOGLE_API_KEY
         sync: false
