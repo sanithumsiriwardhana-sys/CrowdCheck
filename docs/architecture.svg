@@ -5,7 +5,7 @@
     </marker>
   </defs>
   <rect width="960" height="560" fill="#F8F8F5"/>
-  <text x="30" y="40" font-size="24" font-weight="bold" fill="#1E2B2F">CrowdCheck 177 - System Architecture (Gate 2)</text>
+  <text x="30" y="40" font-size="24" font-weight="bold" fill="#1E2B2F">CrowdCheck - System Architecture (routes 177, 170, 190, 17)</text>
 
   <!-- User -->
   <rect x="30" y="230" width="140" height="80" rx="10" fill="#F2C230" stroke="#1E2B2F" stroke-width="2"/>
@@ -16,7 +16,7 @@
   <rect x="230" y="200" width="200" height="140" rx="10" fill="#fff" stroke="#1E2B2F" stroke-width="2"/>
   <text x="330" y="228" font-size="16" font-weight="bold" text-anchor="middle">Frontend</text>
   <text x="330" y="248" font-size="13" text-anchor="middle" fill="#55636A">Next.js 14 (Vercel)</text>
-  <text x="245" y="276" font-size="13">- Pick direction / day / time</text>
+  <text x="245" y="276" font-size="13">- Pick route / direction / time</text>
   <text x="245" y="296" font-size="13">- Prediction + day timeline</text>
   <text x="245" y="316" font-size="13">- 5-second crowd report</text>
 
@@ -52,7 +52,7 @@
   <!-- Training pipeline -->
   <rect x="230" y="420" width="490" height="110" rx="10" fill="#ECEDE8" stroke="#1E2B2F" stroke-width="2"/>
   <text x="475" y="448" font-size="16" font-weight="bold" text-anchor="middle">Training pipeline (offline, python -m ml.train)</text>
-  <text x="250" y="476" font-size="13">Seed data (survey-shaped, synthetic) x1  +  Field logs (team, Route 177) x5</text>
+  <text x="250" y="476" font-size="13">Seed data (survey-shaped, synthetic) x1  +  Field logs (team, all routes) x5</text>
   <text x="250" y="496" font-size="13">+  Rider reports from Supabase x3   →   features: time, day, direction,</text>
   <text x="250" y="516" font-size="13">lecture day, exam week, holiday, rain   →   new crowd_model.joblib</text>
 
