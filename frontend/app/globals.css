@@ -29,10 +29,31 @@ h2 { font-size: 1.6rem; margin-bottom: 4px; }
 
 .masthead { margin-bottom: 28px; }
 
+/* Top bar: route buttons + live clock */
+.topbar { display: grid; gap: 12px; margin-bottom: 26px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) { .topbar { grid-template-columns: minmax(0, 1fr) auto; align-items: stretch; } }
+
+/* Live clock, styled like a bus-stop departure display */
+.clock {
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  background: var(--ink); color: var(--plate); border-radius: 6px; padding: 6px 16px 7px;
+  min-width: 188px;
+}
+.clock-time {
+  font: 700 2.3rem/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+}
+.clock-colon { animation: blink 1s steps(2, start) infinite; }
+.clock-sec { font-size: 1.15rem; margin-left: 5px; opacity: 0.8; }
+.clock-date { font-size: 0.82rem; color: #C5CDD0; margin-top: 3px; white-space: nowrap; }
+@keyframes blink { to { visibility: hidden; } }
+@media (max-width: 979px) {
+  .clock { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 14px; }
+  .clock-time { font-size: 1.9rem; }
+}
+
 /* Route picker: each button is a bus route plate. The selected one is lit up. */
 .routes {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
-  margin-bottom: 26px;
 }
 @media (min-width: 720px) { .routes { grid-template-columns: repeat(4, 1fr); } }
 .route-btn {
@@ -47,7 +68,8 @@ h2 { font-size: 1.6rem; margin-bottom: 4px; }
   font: 800 2.3rem/1 var(--display); padding: 8px 10px 4px; min-width: 2.2em; text-align: center;
   border-right: 2px solid var(--line); display: flex; align-items: center; justify-content: center;
 }
-.route-ends { font: 600 1rem/1.15 var(--display); padding: 6px 10px; display: flex; align-items: center; min-width: 0; overflow-wrap: anywhere; }
+.route-ends { font: 600 1rem/1.15 var(--display); padding: 6px 10px; display: flex; align-items: center; min-width: 0; overflow-wrap: break-word; }
+@media (min-width: 980px) { .route-num { min-width: 1.9em; padding: 8px 8px 4px; } .route-ends { padding: 6px 8px; } }
 @media (max-width: 719px) {
   .routes { gap: 10px; }
   .route-btn { flex-direction: column; }
@@ -130,10 +152,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--plate); out
 .facts dd { margin: 0; font-weight: 600; }
 
 /* Bus floor plan */
-.bus { width: 100%; max-width: 440px; display: block; }
+.bus { width: 100%; max-width: 620px; display: block; margin: 6px 0 4px; }
 .bus .hull { fill: #fff; stroke: var(--ink); stroke-width: 2; }
 .bus .door { fill: var(--plate); }
 .bus .windscreen { fill: #BFD3DA; }
+.bus .driver { fill: var(--ink); }
+.bus .wheel { fill: none; stroke: var(--ink); stroke-width: 3; }
 .bus .seat { fill: none; stroke: var(--line); stroke-width: 2; }
 .bus .seat.taken { fill: var(--ink-soft); stroke: var(--ink-soft); }
 .bus .stander { fill: var(--l2); }

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import BusFill from "@/components/BusFill";
 import DayStrip from "@/components/DayStrip";
+import LiveClock from "@/components/LiveClock";
 import ReportPanel from "@/components/ReportPanel";
 import { api, DaySlot, Direction, Holiday, Prediction, RecentReport } from "@/lib/api";
 import { dirLabel, routeByCode, ROUTES } from "@/lib/routes";
@@ -93,7 +94,8 @@ export default function Home() {
 
   return (
     <main>
-      <nav className="routes" aria-label="Choose a bus route">
+      <div className="topbar">
+        <nav className="routes" aria-label="Choose a bus route">
         {ROUTES.map((r) => (
           <button key={r.code} type="button" aria-pressed={r.code === route}
             className={`route-btn ${r.code === route ? "on" : ""}`} onClick={() => pickRoute(r.code)}>
@@ -101,7 +103,9 @@ export default function Home() {
             <span className="route-ends">{r.from} – {r.to}</span>
           </button>
         ))}
-      </nav>
+        </nav>
+        <LiveClock />
+      </div>
 
       <header className="masthead">
         <h1>Will I get on the {route}?</h1>
